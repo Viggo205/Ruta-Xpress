@@ -1,0 +1,1049 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ruta Xpress - Gestión Inteligente de Envíos Express</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#0ea5e9',
+                        secondary: '#f97316',
+                        dark: '#0f172a',
+                        light: '#f8fafc'
+                    },
+                    animation: {
+                        'float': 'float 3s ease-in-out infinite',
+                        'slide-up': 'slideUp 0.6s ease-out',
+                        'pulse-slow': 'pulse 3s ease-in-out infinite',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-20px)' },
+                        },
+                        slideUp: {
+                            '0%': { transform: 'translateY(30px)', opacity: '0' },
+                            '100%': { transform: 'translateY(0)', opacity: '1' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+        
+        * {
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .gradient-text {
+            background: linear-gradient(135deg, #0ea5e9 0%, #f97316 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+        
+        .card-hover:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+        
+        .tracking-line {
+            background: linear-gradient(90deg, #0ea5e9 0%, #f97316 100%);
+        }
+        
+        .map-dot {
+            animation: pulse-dot 2s ease-in-out infinite;
+        }
+        
+        @keyframes pulse-dot {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.5); opacity: 0.5; }
+        }
+        
+        .scroll-reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s ease-out;
+        }
+        
+        .scroll-reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .nav-scrolled {
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(10px);
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 overflow-x-hidden">
+
+    <!-- Navbar -->
+    <nav id="navbar" class="fixed w-full z-50 transition-all duration-300 py-4">
+        <div class="container mx-auto px-6 flex justify-between items-center">
+            <div class="flex items-center gap-2">
+                <div class="w-10 h-10 bg-gradient-to-br from-primary to-secondary rounded-lg flex items-center justify-center">
+                    <i class="fas fa-shipping-fast text-white text-xl"></i>
+                </div> 
+                <span class="text-2xl font-bold text-white"><a href="index.html">Ruta <span class="text-secondary">Xpress</span></a></span>
+            </div>
+            
+            <div class="hidden md:flex items-center gap-8">
+                <a href="#caracteristicas" class="text-white/80 hover:text-white transition">Características</a>
+                <a href="#como-funciona" class="text-white/80 hover:text-white transition">Cómo Funciona</a>
+                <a href="#demo" class="text-white/80 hover:text-white transition">Demo</a>
+                <a href="#roles" class="text-white/80 hover:text-white transition">Soluciones</a>
+                <a href="#precios" class="text-white/80 hover:text-white transition">Precios</a>
+            </div>
+            
+            <div class="flex items-center gap-4">
+                <button class="hidden md:block text-white hover:text-secondary transition"><a href="registrar.html">Iniciar Sesión</a></button>
+                <button class="bg-gradient-to-r from-primary to-secondary text-white px-6 py-2.5 rounded-full font-semibold hover:shadow-lg hover:shadow-primary/30 transition transform hover:scale-105">
+                    <a href="registrar.html" class="text-white hover:text-secondary transition">Empezar Gratis</a>
+                </button>
+                <button id="mobile-menu-btn" class="md:hidden text-white text-2xl">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+        </div>
+        
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="hidden md:hidden absolute top-full left-0 w-full bg-dark/95 backdrop-blur-lg py-4">
+            <div class="flex flex-col items-center gap-4">
+                <a href="#caracteristicas" class="text-white/80 hover:text-white transition">Características</a>
+                <a href="#como-funciona" class="text-white/80 hover:text-white transition">Cómo Funciona</a>
+                <a href="#demo" class="text-white/80 hover:text-white transition">Demo</a>
+                <a href="#roles" class="text-white/80 hover:text-white transition">Soluciones</a>
+                <a href="#precios" class="text-white/80 hover:text-white transition">Precios</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="relative min-h-screen flex items-center justify-center overflow-hidden bg-dark">
+        <!-- Background Elements -->
+        <div class="absolute inset-0 overflow-hidden">
+            <div class="absolute -top-40 -right-40 w-96 h-96 bg-primary/20 rounded-full blur-3xl"></div>
+            <div class="absolute -bottom-40 -left-40 w-96 h-96 bg-secondary/20 rounded-full blur-3xl"></div>
+            <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-primary/10 rounded-full blur-3xl"></div>
+        </div>
+        
+        <!-- Grid Pattern -->
+        <div class="absolute inset-0 opacity-10" style="background-image: radial-gradient(circle at 1px 1px, white 1px, transparent 0); background-size: 40px 40px;"></div>
+        
+        <div class="container mx-auto px-6 relative z-10 pt-20">
+            <div class="grid lg:grid-cols-2 gap-12 items-center">
+                <div class="text-center lg:text-left scroll-reveal">
+                    <div class="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full px-4 py-2 mb-6">
+                        <span class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
+                        <span class="text-white/80 text-sm">Plataforma #1 en Gestión de Envíos</span>
+                    </div>
+                    
+                    <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-tight mb-6">
+                        Gestión Inteligente de <br>
+                        <span class="gradient-text">Envíos Express</span>
+                    </h1>
+                    
+                    <p class="text-lg text-white/70 mb-8 max-w-xl mx-auto lg:mx-0">
+                        Conectamos clientes con transportistas de forma inteligente. 
+                        Rastreo en tiempo real, asignación automática y gestión completa 
+                        de tu operación logística en una sola plataforma.
+                    </p>
+                    
+                    <div class="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start mb-12">
+                        <button class="bg-gradient-to-r from-primary to-secondary text-white px-8 py-4 rounded-full font-semibold hover:shadow-lg hover:shadow-primary/30 transition transform hover:scale-105 flex items-center justify-center gap-2">
+                            <i class="fas fa-paper-plane"></i>
+                            Solicitar Envío
+                        </button>
+                        <button class="glass-effect text-white px-8 py-4 rounded-full font-semibold hover:bg-white/20 transition flex items-center justify-center gap-2">
+                            <i class="fas fa-play-circle"></i>
+                            Ver Demo
+                        </button>
+                    </div>
+                    
+                    <div class="flex flex-wrap justify-center lg:justify-start gap-8 text-white/60">
+                        <div class="flex items-center gap-2">
+                            <i class="fas fa-check-circle text-primary"></i>
+                            <span>Asignación Inteligente</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <i class="fas fa-check-circle text-primary"></i>
+                            <span>Rastreo GPS</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <i class="fas fa-check-circle text-primary"></i>
+                            <span>Gestión Financiera</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="relative scroll-reveal">
+                    <div class="relative animate-float">
+                        <img src="https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=800" alt="Ruta Xpress Platform" class="rounded-2xl shadow-2xl shadow-primary/20 w-full">
+                        
+                        <!-- Floating Cards -->
+                        <div class="absolute -left-8 top-1/4 glass-effect rounded-xl p-4 animate-slide-up" style="animation-delay: 0.2s">
+                            <div class="flex items-center gap-3">
+                                <div class="w-12 h-12 bg-green-500/20 rounded-full flex items-center justify-center">
+                                    <i class="fas fa-map-marker-alt text-green-400"></i>
+                                </div>
+                                <div>
+                                    <p class="text-white text-sm font-semibold">En Camino</p>
+                                    <p class="text-white/60 text-xs">Paquete #RX-8921</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="absolute -right-4 bottom-1/4 glass-effect rounded-xl p-4 animate-slide-up" style="animation-delay: 0.4s">
+                            <div class="flex items-center gap-3">
+                                <div class="w-12 h-12 bg-primary/20 rounded-full flex items-center justify-center">
+                                    <i class="fas fa-motorcycle text-primary"></i>
+                                </div>
+                                <div>
+                                    <p class="text-white text-sm font-semibold">Transportista Asignado</p>
+                                    <p class="text-white/60 text-xs">Llega en 15 min</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Scroll Indicator -->
+        <div class="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
+            <i class="fas fa-chevron-down text-white/50 text-2xl"></i>
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="py-20 bg-white">
+        <div class="container mx-auto px-6">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
+                <div class="text-center scroll-reveal">
+                    <div class="text-4xl md:text-5xl font-bold gradient-text mb-2 counter" data-target="50000">0</div>
+                    <p class="text-slate-600">Envíos Completados</p>
+                </div>
+                <div class="text-center scroll-reveal">
+                    <div class="text-4xl md:text-5xl font-bold gradient-text mb-2 counter" data-target="1200">0</div>
+                    <p class="text-slate-600">Transportistas Activos</p>
+                </div>
+                <div class="text-center scroll-reveal">
+                    <div class="text-4xl md:text-5xl font-bold gradient-text mb-2 counter" data-target="98">0</div>
+                    <p class="text-slate-600">% Satisfacción Cliente</p>
+                </div>
+                <div class="text-center scroll-reveal">
+                    <div class="text-4xl md:text-5xl font-bold gradient-text mb-2 counter" data-target="15">0</div>
+                    <p class="text-slate-600">Min Tiempo Promedio</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="caracteristicas" class="py-24 bg-slate-50">
+        <div class="container mx-auto px-6">
+            <div class="text-center mb-16 scroll-reveal">
+                <span class="text-primary font-semibold uppercase tracking-wider">Características</span>
+                <h2 class="text-3xl md:text-4xl font-bold text-dark mt-2 mb-4">
+                    Todo lo que necesitas en <span class="gradient-text">una plataforma</span>
+                </h2>
+                <p class="text-slate-600 max-w-2xl mx-auto">
+                    Ruta Xpress integra todas las herramientas necesarias para gestionar 
+                    envíos de forma eficiente, desde la solicitud hasta la entrega final.
+                </p>
+            </div>
+            
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Feature 1 -->
+                <div class="bg-white rounded-2xl p-8 shadow-lg card-hover scroll-reveal">
+                    <div class="w-14 h-14 bg-primary/10 rounded-xl flex items-center justify-center mb-6">
+                        <i class="fas fa-box-open text-primary text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-dark mb-3">Solicitud de Envíos</h3>
+                    <p class="text-slate-600">
+                        Los clientes pueden solicitar domiciliarios especificando dimensiones, 
+                        peso y destino del paquete de forma sencilla e intuitiva.
+                    </p>
+                </div>
+                
+                <!-- Feature 2 -->
+                <div class="bg-white rounded-2xl p-8 shadow-lg card-hover scroll-reveal">
+                    <div class="w-14 h-14 bg-secondary/10 rounded-xl flex items-center justify-center mb-6">
+                        <i class="fas fa-map-marked-alt text-secondary text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-dark mb-3">Rastreo en Tiempo Real</h3>
+                    <p class="text-slate-600">
+                        Visualiza la ubicación exacta de tus paquetes en el mapa. 
+                        Estados: En movimiento, En oficina, Entregado.
+                    </p>
+                </div>
+                
+                <!-- Feature 3 -->
+                <div class="bg-white rounded-2xl p-8 shadow-lg card-hover scroll-reveal">
+                    <div class="w-14 h-14 bg-green-500/10 rounded-xl flex items-center justify-center mb-6">
+                        <i class="fas fa-bolt text-green-500 text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-dark mb-3">Asignación Inteligente</h3>
+                    <p class="text-slate-600">
+                        El sistema asigna automáticamente el transportista más cercano 
+                        con disponibilidad de espacio en su vehículo.
+                    </p>
+                </div>
+                
+                <!-- Feature 4 -->
+                <div class="bg-white rounded-2xl p-8 shadow-lg card-hover scroll-reveal">
+                    <div class="w-14 h-14 bg-purple-500/10 rounded-xl flex items-center justify-center mb-6">
+                        <i class="fas fa-chart-line text-purple-500 text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-dark mb-3">Panel Administrativo</h3>
+                    <p class="text-slate-600">
+                        Gestiona todas las órdenes, visualiza estados por identificador 
+                        y monitorea la ubicación de todos los repartidores.
+                    </p>
+                </div>
+                
+                <!-- Feature 5 -->
+                <div class="bg-white rounded-2xl p-8 shadow-lg card-hover scroll-reveal">
+                    <div class="w-14 h-14 bg-orange-500/10 rounded-xl flex items-center justify-center mb-6">
+                        <i class="fas fa-calculator text-orange-500 text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-dark mb-3">Control Financiero</h3>
+                    <p class="text-slate-600">
+                        Visualiza ingresos por envíos, gastos de gasolina y pagos 
+                        de salarios en tiempo real con reportes detallados.
+                    </p>
+                </div>
+                
+                <!-- Feature 6 -->
+                <div class="bg-white rounded-2xl p-8 shadow-lg card-hover scroll-reveal">
+                    <div class="w-14 h-14 bg-pink-500/10 rounded-xl flex items-center justify-center mb-6">
+                        <i class="fas fa-mobile-alt text-pink-500 text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-dark mb-3">App Móvil</h3>
+                    <p class="text-slate-600">
+                        Accede desde cualquier dispositivo. Apps nativas para iOS y Android 
+                        para clientes y transportistas.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works -->
+    <section id="como-funciona" class="py-24 bg-dark text-white relative overflow-hidden">
+        <div class="absolute inset-0 opacity-5" style="background-image: radial-gradient(circle at 1px 1px, white 1px, transparent 0); background-size: 30px 30px;"></div>
+        
+        <div class="container mx-auto px-6 relative z-10">
+            <div class="text-center mb-16 scroll-reveal">
+                <span class="text-secondary font-semibold uppercase tracking-wider">Proceso</span>
+                <h2 class="text-3xl md:text-4xl font-bold mt-2 mb-4">
+                    ¿Cómo funciona <span class="gradient-text">Ruta Xpress</span>?
+                </h2>
+            </div>
+            
+            <div class="grid md:grid-cols-4 gap-8">
+                <!-- Step 1 -->
+                <div class="text-center scroll-reveal">
+                    <div class="relative mb-6">
+                        <div class="w-20 h-20 bg-gradient-to-br from-primary to-secondary rounded-2xl mx-auto flex items-center justify-center text-3xl font-bold shadow-lg shadow-primary/30">
+                            1
+                        </div>
+                        <div class="hidden md:block absolute top-1/2 left-full w-full h-1 tracking-line transform -translate-y-1/2"></div>
+                    </div>
+                    <h3 class="text-xl font-bold mb-2">Solicita</h3>
+                    <p class="text-white/60 text-sm">
+                        Ingresa las dimensiones, peso y destino de tu paquete
+                    </p>
+                </div>
+                
+                <!-- Step 2 -->
+                <div class="text-center scroll-reveal">
+                    <div class="relative mb-6">
+                        <div class="w-20 h-20 bg-gradient-to-br from-primary to-secondary rounded-2xl mx-auto flex items-center justify-center text-3xl font-bold shadow-lg shadow-primary/30">
+                            2
+                        </div>
+                        <div class="hidden md:block absolute top-1/2 left-full w-full h-1 tracking-line transform -translate-y-1/2"></div>
+                    </div>
+                    <h3 class="text-xl font-bold mb-2">Asignación</h3>
+                    <p class="text-white/60 text-sm">
+                        El sistema asigna el transportista más cercano disponible
+                    </p>
+                </div>
+                
+                <!-- Step 3 -->
+                <div class="text-center scroll-reveal">
+                    <div class="relative mb-6">
+                        <div class="w-20 h-20 bg-gradient-to-br from-primary to-secondary rounded-2xl mx-auto flex items-center justify-center text-3xl font-bold shadow-lg shadow-primary/30">
+                            3
+                        </div>
+                        <div class="hidden md:block absolute top-1/2 left-full w-full h-1 tracking-line transform -translate-y-1/2"></div>
+                    </div>
+                    <h3 class="text-xl font-bold mb-2">Rastrea</h3>
+                    <p class="text-white/60 text-sm">
+                        Sigue tu paquete en tiempo real por el mapa
+                    </p>
+                </div>
+                
+                <!-- Step 4 -->
+                <div class="text-center scroll-reveal">
+                    <div class="relative mb-6">
+                        <div class="w-20 h-20 bg-gradient-to-br from-primary to-secondary rounded-2xl mx-auto flex items-center justify-center text-3xl font-bold shadow-lg shadow-primary/30">
+                            4
+                        </div>
+                    </div>
+                    <h3 class="text-xl font-bold mb-2">Entrega</h3>
+                    <p class="text-white/60 text-sm">
+                        Recibe confirmación de entrega con firma digital
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Interactive Demo Section -->
+    <section id="demo" class="py-24 bg-slate-50">
+        <div class="container mx-auto px-6">
+            <div class="text-center mb-12 scroll-reveal">
+                <span class="text-primary font-semibold uppercase tracking-wider">Demo Interactiva</span>
+                <h2 class="text-3xl md:text-4xl font-bold text-dark mt-2 mb-4">
+                    Prueba el <span class="gradient-text">rastreo en vivo</span>
+                </h2>
+            </div>
+            
+            <div class="bg-white rounded-3xl shadow-2xl overflow-hidden max-w-5xl mx-auto scroll-reveal">
+                <!-- Demo Header -->
+                <div class="bg-dark text-white p-6 flex flex-col md:flex-row justify-between items-center gap-4">
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 bg-primary/20 rounded-full flex items-center justify-center">
+                            <i class="fas fa-box text-primary"></i>
+                        </div>
+                        <div>
+                            <p class="text-sm text-white/60">Número de Seguimiento</p>
+                            <p class="font-bold text-lg">RX-8921-COL</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="w-3 h-3 bg-green-400 rounded-full map-dot"></span>
+                        <span class="text-green-400 font-semibold">En Camino</span>
+                    </div>
+                </div>
+                
+                <!-- Demo Content -->
+                <div class="grid md:grid-cols-3">
+                    <!-- Tracking Timeline -->
+                    <div class="p-6 border-r border-slate-200">
+                        <h4 class="font-bold text-dark mb-6">Estado del Envío</h4>
+                        <div class="space-y-6">
+                            <div class="flex gap-4">
+                                <div class="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center flex-shrink-0">
+                                    <i class="fas fa-check text-white"></i>
+                                </div>
+                                <div>
+                                    <p class="font-semibold text-dark">Pedido Recibido</p>
+                                    <p class="text-sm text-slate-500">Hoy, 9:30 AM</p>
+                                </div>
+                            </div>
+                            <div class="flex gap-4">
+                                <div class="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center flex-shrink-0">
+                                    <i class="fas fa-check text-white"></i>
+                                </div>
+                                <div>
+                                    <p class="font-semibold text-dark">En Preparación</p>
+                                    <p class="text-sm text-slate-500">Hoy, 10:15 AM</p>
+                                </div>
+                            </div>
+                            <div class="flex gap-4">
+                                <div class="w-10 h-10 bg-primary rounded-full flex items-center justify-center flex-shrink-0 animate-pulse">
+                                    <i class="fas fa-motorcycle text-white"></i>
+                                </div>
+                                <div>
+                                    <p class="font-semibold text-dark">En Camino</p>
+                                    <p class="text-sm text-slate-500">Hoy, 11:00 AM</p>
+                                    <p class="text-sm text-primary mt-1">Llegada estimada: 12:30 PM</p>
+                                </div>
+                            </div>
+                            <div class="flex gap-4 opacity-50">
+                                <div class="w-10 h-10 bg-slate-300 rounded-full flex items-center justify-center flex-shrink-0">
+                                    <i class="fas fa-home text-white"></i>
+                                </div>
+                                <div>
+                                    <p class="font-semibold text-dark">Entregado</p>
+                                    <p class="text-sm text-slate-500">Pendiente</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Package Info -->
+                        <div class="mt-8 p-4 bg-slate-50 rounded-xl">
+                            <h5 class="font-semibold text-dark mb-3">Detalles del Paquete</h5>
+                            <div class="space-y-2 text-sm">
+                                <div class="flex justify-between">
+                                    <span class="text-slate-500">Peso:</span>
+                                    <span class="font-medium">2.5 kg</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-slate-500">Dimensiones:</span>
+                                    <span class="font-medium">30x20x15 cm</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-slate-500">Transportista:</span>
+                                    <span class="font-medium">Carlos M.</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Map Simulation -->
+                    <div class="md:col-span-2 relative bg-slate-100 min-h-[400px]">
+                        <div class="absolute inset-0" style="background: linear-gradient(135deg, #e2e8f0 0%, #cbd5e1 100%);">
+                            <!-- Map Grid -->
+                            <div class="absolute inset-0 opacity-30" style="background-image: linear-gradient(#94a3b8 1px, transparent 1px), linear-gradient(90deg, #94a3b8 1px, transparent 1px); background-size: 50px 50px;"></div>
+                            
+                            <!-- Route Line -->
+                            <svg class="absolute inset-0 w-full h-full">
+                                <path d="M 100 300 Q 300 250 500 200 T 700 150" stroke="#0ea5e9" stroke-width="4" fill="none" stroke-dasharray="10,5" class="animate-pulse"/>
+                                <circle cx="100" cy="300" r="8" fill="#22c55e"/>
+                                <circle cx="700" cy="150" r="8" fill="#f97316"/>
+                            </svg>
+                            
+                            <!-- Moving Marker -->
+                            <div id="map-marker" class="absolute w-12 h-12 bg-primary rounded-full shadow-lg flex items-center justify-center transform -translate-x-1/2 -translate-y-1/2 transition-all duration-1000" style="left: 30%; top: 65%;">
+                                <i class="fas fa-motorcycle text-white"></i>
+                                <div class="absolute -bottom-8 left-1/2 transform -translate-x-1/2 bg-dark text-white text-xs px-2 py-1 rounded whitespace-nowrap">
+                                    Carlos M.
+                                </div>
+                            </div>
+                            
+                            <!-- Location Pins -->
+                            <div class="absolute left-[100px] top-[300px] transform -translate-x-1/2 -translate-y-1/2">
+                                <div class="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center shadow-lg">
+                                    <i class="fas fa-store text-white text-sm"></i>
+                                </div>
+                                <div class="absolute -bottom-6 left-1/2 transform -translate-x-1/2 bg-white text-dark text-xs px-2 py-1 rounded shadow whitespace-nowrap">
+                                    Origen
+                                </div>
+                            </div>
+                            
+                            <div class="absolute right-[100px] top-[150px] transform -translate-x-1/2 -translate-y-1/2">
+                                <div class="w-8 h-8 bg-secondary rounded-full flex items-center justify-center shadow-lg">
+                                    <i class="fas fa-home text-white text-sm"></i>
+                                </div>
+                                <div class="absolute -bottom-6 left-1/2 transform -translate-x-1/2 bg-white text-dark text-xs px-2 py-1 rounded shadow whitespace-nowrap">
+                                    Destino
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Solutions by Role -->
+    <section id="roles" class="py-24 bg-white">
+        <div class="container mx-auto px-6">
+            <div class="text-center mb-16 scroll-reveal">
+                <span class="text-primary font-semibold uppercase tracking-wider">Soluciones</span>
+                <h2 class="text-3xl md:text-4xl font-bold text-dark mt-2 mb-4">
+                    Diseñado para cada <span class="gradient-text">tipo de usuario</span>
+                </h2>
+            </div>
+            
+            <div class="grid lg:grid-cols-3 gap-8">
+                <!-- Client -->
+                <div class="bg-gradient-to-br from-slate-50 to-white rounded-3xl p-8 border border-slate-200 card-hover scroll-reveal">
+                    <div class="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mb-6">
+                        <i class="fas fa-user text-primary text-2xl"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-dark mb-4">Para Clientes</h3>
+                    <ul class="space-y-3 mb-6">
+                        <li class="flex items-start gap-3">
+                            <i class="fas fa-check-circle text-primary mt-1"></i>
+                            <span class="text-slate-600">Solicitud de envíos en minutos</span>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <i class="fas fa-check-circle text-primary mt-1"></i>
+                            <span class="text-slate-600">Rastreo GPS en tiempo real</span>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <i class="fas fa-check-circle text-primary mt-1"></i>
+                            <span class="text-slate-600">Notificaciones de estado</span>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <i class="fas fa-check-circle text-primary mt-1"></i>
+                            <span class="text-slate-600">Historial de envíos</span>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <i class="fas fa-check-circle text-primary mt-1"></i>
+                            <span class="text-slate-600">Múltiples métodos de pago</span>
+                        </li>
+                    </ul>
+                    <button class="w-full py-3 border-2 border-primary text-primary rounded-xl font-semibold hover:bg-primary hover:text-white transition">
+                        Ver Más
+                    </button>
+                </div>
+                
+                <!-- Transportista -->
+                <div class="bg-gradient-to-br from-primary/5 to-secondary/5 rounded-3xl p-8 border border-primary/20 card-hover scroll-reveal">
+                    <div class="w-16 h-16 bg-gradient-to-br from-primary to-secondary rounded-2xl flex items-center justify-center mb-6">
+                        <i class="fas fa-motorcycle text-white text-2xl"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-dark mb-4">Para Transportistas</h3>
+                    <ul class="space-y-3 mb-6">
+                        <li class="flex items-start gap-3">
+                            <i class="fas fa-check-circle text-primary mt-1"></i>
+                            <span class="text-slate-600">Asignación automática de pedidos</span>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <i class="fas fa-check-circle text-primary mt-1"></i>
+                            <span class="text-slate-600">Optimización de rutas</span>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <i class="fas fa-check-circle text-primary mt-1"></i>
+                            <span class="text-slate-600">Gestión de capacidad del vehículo</span>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <i class="fas fa-check-circle text-primary mt-1"></i>
+                            <span class="text-slate-600">Confirmación con firma digital</span>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <i class="fas fa-check-circle text-primary mt-1"></i>
+                            <span class="text-slate-600">Pagos semanales garantizados</span>
+                        </li>
+                    </ul>
+                    <button class="w-full py-3 bg-gradient-to-r from-primary to-secondary text-white rounded-xl font-semibold hover:shadow-lg transition">
+                        Registrarme
+                    </button>
+                </div>
+                
+                <!-- Administrativo -->
+                <div class="bg-gradient-to-br from-slate-50 to-white rounded-3xl p-8 border border-slate-200 card-hover scroll-reveal">
+                    <div class="w-16 h-16 bg-purple-500/10 rounded-2xl flex items-center justify-center mb-6">
+                        <i class="fas fa-chart-pie text-purple-500 text-2xl"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-dark mb-4">Para Administrativos</h3>
+                    <ul class="space-y-3 mb-6">
+                        <li class="flex items-start gap-3">
+                            <i class="fas fa-check-circle text-purple-500 mt-1"></i>
+                            <span class="text-slate-600">Dashboard de órdenes en tiempo real</span>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <i class="fas fa-check-circle text-purple-500 mt-1"></i>
+                            <span class="text-slate-600">Ubicación de toda la flota</span>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <i class="fas fa-check-circle text-purple-500 mt-1"></i>
+                            <span class="text-slate-600">Reportes de ingresos y gastos</span>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <i class="fas fa-check-circle text-purple-500 mt-1"></i>
+                            <span class="text-slate-600">Control de gasolina y salarios</span>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <i class="fas fa-check-circle text-purple-500 mt-1"></i>
+                            <span class="text-slate-600">Análisis de rendimiento</span>
+                        </li>
+                    </ul>
+                    <button class="w-full py-3 border-2 border-purple-500 text-purple-500 rounded-xl font-semibold hover:bg-purple-500 hover:text-white transition">
+                        Solicitar Demo
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Admin Dashboard Preview -->
+    <section class="py-24 bg-dark text-white relative overflow-hidden">
+        <div class="absolute inset-0 opacity-5" style="background-image: radial-gradient(circle at 1px 1px, white 1px, transparent 0); background-size: 40px 40px;"></div>
+        
+        <div class="container mx-auto px-6 relative z-10">
+            <div class="grid lg:grid-cols-2 gap-12 items-center">
+                <div class="scroll-reveal">
+                    <span class="text-secondary font-semibold uppercase tracking-wider">Panel Administrativo</span>
+                    <h2 class="text-3xl md:text-4xl font-bold mt-2 mb-6">
+                        Control total de tu <span class="gradient-text">operación logística</span>
+                    </h2>
+                    <p class="text-white/70 mb-8">
+                        Gestiona cada aspecto de tu negocio de envíos desde un solo lugar. 
+                        Visualiza métricas clave, controla gastos y maximiza tus ganancias.
+                    </p>
+                    
+                    <div class="grid grid-cols-2 gap-4 mb-8">
+                        <div class="glass-effect rounded-xl p-4">
+                            <p class="text-white/60 text-sm mb-1">Ingresos Hoy</p>
+                            <p class="text-2xl font-bold text-green-400">$2,450,000</p>
+                            <p class="text-xs text-green-400/70">+15% vs ayer</p>
+                        </div>
+                        <div class="glass-effect rounded-xl p-4">
+                            <p class="text-white/60 text-sm mb-1">Gastos</p>
+                            <p class="text-2xl font-bold text-secondary">$890,000</p>
+                            <p class="text-xs text-secondary/70">Gasolina + Salarios</p>
+                        </div>
+                        <div class="glass-effect rounded-xl p-4">
+                            <p class="text-white/60 text-sm mb-1">Utilidad</p>
+                            <p class="text-2xl font-bold text-primary">$1,560,000</p>
+                            <p class="text-xs text-primary/70">63% margen</p>
+                        </div>
+                        <div class="glass-effect rounded-xl p-4">
+                            <p class="text-white/60 text-sm mb-1">Envíos Activos</p>
+                            <p class="text-2xl font-bold text-white">47</p>
+                            <p class="text-xs text-white/70">12 por entregar</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="scroll-reveal">
+                    <div class="relative">
+                        <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800" alt="Dashboard" class="rounded-2xl shadow-2xl shadow-primary/20">
+                        
+                        <!-- Floating Stats -->
+                        <div class="absolute -left-6 top-1/4 glass-effect rounded-xl p-4 animate-float">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 bg-green-500/20 rounded-full flex items-center justify-center">
+                                    <i class="fas fa-check text-green-400"></i>
+                                </div>
+                                <div>
+                                    <p class="text-white text-sm font-semibold">Entregado #RX-8890</p>
+                                    <p class="text-white/60 text-xs">Hace 2 minutos</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing -->
+    <section id="precios" class="py-24 bg-slate-50">
+        <div class="container mx-auto px-6">
+            <div class="text-center mb-16 scroll-reveal">
+                <span class="text-primary font-semibold uppercase tracking-wider">Precios</span>
+                <h2 class="text-3xl md:text-4xl font-bold text-dark mt-2 mb-4">
+                    Planes para cada <span class="gradient-text">necesidad</span>
+                </h2>
+                <p class="text-slate-600">Sin contratos de permanencia. Cancela cuando quieras.</p>
+            </div>
+            
+            <div class="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+                <!-- Basic -->
+                <div class="bg-white rounded-3xl p-8 shadow-lg card-hover scroll-reveal">
+                    <h3 class="text-xl font-bold text-dark mb-2">Emprendedor</h3>
+                    <p class="text-slate-500 text-sm mb-6">Para pequeños negocios</p>
+                    <div class="mb-6">
+                        <span class="text-4xl font-bold text-dark">$99.000</span>
+                        <span class="text-slate-500">/mes</span>
+                    </div>
+                    <ul class="space-y-3 mb-8">
+                        <li class="flex items-center gap-3 text-slate-600">
+                            <i class="fas fa-check text-primary"></i>
+                            <span>Hasta 100 envíos/mes</span>
+                        </li>
+                        <li class="flex items-center gap-3 text-slate-600">
+                            <i class="fas fa-check text-primary"></i>
+                            <span>3 transportistas</span>
+                        </li>
+                        <li class="flex items-center gap-3 text-slate-600">
+                            <i class="fas fa-check text-primary"></i>
+                            <span>Rastreo básico</span>
+                        </li>
+                        <li class="flex items-center gap-3 text-slate-600">
+                            <i class="fas fa-check text-primary"></i>
+                            <span>Soporte por email</span>
+                        </li>
+                    </ul>
+                    <button class="w-full py-3 border-2 border-primary text-primary rounded-xl font-semibold hover:bg-primary hover:text-white transition">
+                        Elegir Plan
+                    </button>
+                </div>
+                
+                <!-- Pro -->
+                <div class="bg-gradient-to-br from-primary to-secondary rounded-3xl p-8 shadow-2xl transform scale-105 scroll-reveal">
+                    <div class="absolute -top-4 left-1/2 transform -translate-x-1/2">
+                        <span class="bg-secondary text-white text-xs font-bold px-4 py-1 rounded-full">MÁS POPULAR</span>
+                    </div>
+                    <h3 class="text-xl font-bold text-white mb-2">Empresarial</h3>
+                    <p class="text-white/70 text-sm mb-6">Para empresas en crecimiento</p>
+                    <div class="mb-6">
+                        <span class="text-4xl font-bold text-white">$299.000</span>
+                        <span class="text-white/70">/mes</span>
+                    </div>
+                    <ul class="space-y-3 mb-8">
+                        <li class="flex items-center gap-3 text-white">
+                            <i class="fas fa-check"></i>
+                            <span>Envíos ilimitados</span>
+                        </li>
+                        <li class="flex items-center gap-3 text-white">
+                            <i class="fas fa-check"></i>
+                            <span>20 transportistas</span>
+                        </li>
+                        <li class="flex items-center gap-3 text-white">
+                            <i class="fas fa-check"></i>
+                            <span>Rastreo avanzado + API</span>
+                        </li>
+                        <li class="flex items-center gap-3 text-white">
+                            <i class="fas fa-check"></i>
+                            <span>Panel administrativo</span>
+                        </li>
+                        <li class="flex items-center gap-3 text-white">
+                            <i class="fas fa-check"></i>
+                            <span>Soporte prioritario 24/7</span>
+                        </li>
+                    </ul>
+                    <button class="w-full py-3 bg-white text-primary rounded-xl font-semibold hover:shadow-lg transition">
+                        Elegir Plan
+                    </button>
+                </div>
+                
+                <!-- Enterprise -->
+                <div class="bg-white rounded-3xl p-8 shadow-lg card-hover scroll-reveal">
+                    <h3 class="text-xl font-bold text-dark mb-2">Corporativo</h3>
+                    <p class="text-slate-500 text-sm mb-6">Para grandes operaciones</p>
+                    <div class="mb-6">
+                        <span class="text-4xl font-bold text-dark">Personalizado</span>
+                    </div>
+                    <ul class="space-y-3 mb-8">
+                        <li class="flex items-center gap-3 text-slate-600">
+                            <i class="fas fa-check text-primary"></i>
+                            <span>Todo lo del plan Empresarial</span>
+                        </li>
+                        <li class="flex items-center gap-3 text-slate-600">
+                            <i class="fas fa-check text-primary"></i>
+                            <span>Transportistas ilimitados</span>
+                        </li>
+                        <li class="flex items-center gap-3 text-slate-600">
+                            <i class="fas fa-check text-primary"></i>
+                            <span>Desarrollo a medida</span>
+                        </li>
+                        <li class="flex items-center gap-3 text-slate-600">
+                            <i class="fas fa-check text-primary"></i>
+                            <span>Gerente de cuenta dedicado</span>
+                        </li>
+                        <li class="flex items-center gap-3 text-slate-600">
+                            <i class="fas fa-check text-primary"></i>
+                            <span>SLA garantizado</span>
+                        </li>
+                    </ul>
+                    <button class="w-full py-3 border-2 border-primary text-primary rounded-xl font-semibold hover:bg-primary hover:text-white transition">
+                        Contactar Ventas
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="py-24 bg-gradient-to-r from-primary to-secondary relative overflow-hidden">
+        <div class="absolute inset-0 opacity-10" style="background-image: radial-gradient(circle at 1px 1px, white 1px, transparent 0); background-size: 30px 30px;"></div>
+        
+        <div class="container mx-auto px-6 text-center relative z-10 scroll-reveal">
+            <h2 class="text-3xl md:text-5xl font-bold text-white mb-6">
+                ¿Listo para optimizar tus envíos?
+            </h2>
+            <p class="text-white/80 text-lg mb-8 max-w-2xl mx-auto">
+                Únete a miles de empresas que ya confían en Ruta Xpress para su 
+                logística de última milla. Comienza gratis hoy.
+            </p>
+            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                <button class="bg-white text-primary px-8 py-4 rounded-full font-bold hover:shadow-xl transition transform hover:scale-105">
+                    Comenzar Gratis
+                </button>
+                <button class="border-2 border-white text-white px-8 py-4 rounded-full font-bold hover:bg-white/10 transition">
+                    Hablar con Ventas
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-white py-16">
+        <div class="container mx-auto px-6">
+            <div class="grid md:grid-cols-4 gap-8 mb-12">
+                <div>
+                    <div class="flex items-center gap-2 mb-4">
+                        <div class="w-10 h-10 bg-gradient-to-br from-primary to-secondary rounded-lg flex items-center justify-center">
+                            <i class="fas fa-shipping-fast text-white text-xl"></i>
+                        </div>
+                        <span class="text-2xl font-bold">Ruta <span class="text-secondary">Xpress</span></span>
+                    </div>
+                    <p class="text-white/60 mb-4">
+                        La plataforma líder en gestión de envíos express. 
+                        Conectamos personas y negocios de forma inteligente.
+                    </p>
+                    <div class="flex gap-4">
+                        <a href="#" class="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-primary transition">
+                            <i class="fab fa-facebook-f"></i>
+                        </a>
+                        <a href="#" class="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-primary transition">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                        <a href="#" class="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-primary transition">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                        <a href="#" class="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-primary transition">
+                            <i class="fab fa-linkedin-in"></i>
+                        </a>
+                    </div>
+                </div>
+                
+                <div>
+                    <h4 class="font-bold text-lg mb-4">Producto</h4>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-white/60 hover:text-white transition">Características</a></li>
+                        <li><a href="#" class="text-white/60 hover:text-white transition">Precios</a></li>
+                        <li><a href="#" class="text-white/60 hover:text-white transition">Integraciones</a></li>
+                        <li><a href="#" class="text-white/60 hover:text-white transition">API</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="font-bold text-lg mb-4">Empresa</h4>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-white/60 hover:text-white transition">Sobre Nosotros</a></li>
+                        <li><a href="#" class="text-white/60 hover:text-white transition">Blog</a></li>
+                        <li><a href="#" class="text-white/60 hover:text-white transition">Carreras</a></li>
+                        <li><a href="#" class="text-white/60 hover:text-white transition">Prensa</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="font-bold text-lg mb-4">Soporte</h4>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-white/60 hover:text-white transition">Centro de Ayuda</a></li>
+                        <li><a href="#" class="text-white/60 hover:text-white transition">Documentación</a></li>
+                        <li><a href="#" class="text-white/60 hover:text-white transition">Contacto</a></li>
+                        <li><a href="#" class="text-white/60 hover:text-white transition">Estado del Sistema</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="border-t border-white/10 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
+                <p class="text-white/60 text-sm">
+                    © 2024 Ruta Xpress. Todos los derechos reservados.
+                </p>
+                <div class="flex gap-6 text-sm">
+                    <a href="#" class="text-white/60 hover:text-white transition">Términos de Servicio</a>
+                    <a href="#" class="text-white/60 hover:text-white transition">Política de Privacidad</a>
+                    <a href="#" class="text-white/60 hover:text-white transition">Cookies</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Navbar scroll effect
+        const navbar = document.getElementById('navbar');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 50) {
+                navbar.classList.add('nav-scrolled');
+            } else {
+                navbar.classList.remove('nav-scrolled');
+            }
+        });
+
+        // Mobile menu toggle
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+        
+        mobileMenuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        // Scroll reveal animation
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.scroll-reveal').forEach(el => {
+            observer.observe(el);
+        });
+
+        // Counter animation
+        const counters = document.querySelectorAll('.counter');
+        const counterObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const counter = entry.target;
+                    const target = parseInt(counter.getAttribute('data-target'));
+                    const duration = 2000;
+                    const step = target / (duration / 16);
+                    let current = 0;
+                    
+                    const updateCounter = () => {
+                        current += step;
+                        if (current < target) {
+                            counter.textContent = Math.floor(current).toLocaleString();
+                            requestAnimationFrame(updateCounter);
+                        } else {
+                            counter.textContent = target.toLocaleString() + (target > 90 ? '%' : '+');
+                        }
+                    };
+                    
+                    updateCounter();
+                    counterObserver.unobserve(counter);
+                }
+            });
+        }, { threshold: 0.5 });
+
+        counters.forEach(counter => counterObserver.observe(counter));
+
+        // Map marker animation
+        const marker = document.getElementById('map-marker');
+        let position = 30;
+        let direction = 1;
+        
+        setInterval(() => {
+            position += direction * 0.5;
+            if (position >= 70 || position <= 30) {
+                direction *= -1;
+            }
+            marker.style.left = position + '%';
+            marker.style.top = (65 - (position - 30) * 0.5) + '%';
+        }, 100);
+
+        // Smooth scroll for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                    // Close mobile menu if open
+                    mobileMenu.classList.add('hidden');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

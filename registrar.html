@@ -1,0 +1,1029 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crear Cuenta - Ruta Xpress</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#0ea5e9',
+                        secondary: '#f97316',
+                        dark: '#0f172a',
+                        light: '#f8fafc'
+                    },
+                    animation: {
+                        'float': 'float 3s ease-in-out infinite',
+                        'slide-up': 'slideUp 0.6s ease-out',
+                        'fade-in': 'fadeIn 0.5s ease-out',
+                        'shake': 'shake 0.5s ease-in-out',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-10px)' },
+                        },
+                        slideUp: {
+                            '0%': { transform: 'translateY(20px)', opacity: '0' },
+                            '100%': { transform: 'translateY(0)', opacity: '1' },
+                        },
+                        fadeIn: {
+                            '0%': { opacity: '0' },
+                            '100%': { opacity: '1' },
+                        },
+                        shake: {
+                            '0%, 100%': { transform: 'translateX(0)' },
+                            '25%': { transform: 'translateX(-5px)' },
+                            '75%': { transform: 'translateX(5px)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+        
+        * {
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .gradient-text {
+            background: linear-gradient(135deg, #0ea5e9 0%, #f97316 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .input-focus-ring:focus {
+            box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.2);
+        }
+        
+        .step-active {
+            background: linear-gradient(135deg, #0ea5e9 0%, #f97316 100%);
+            color: white;
+        }
+        
+        .step-completed {
+            background: #22c55e;
+            color: white;
+        }
+        
+        .user-card {
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .user-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(14, 165, 233, 0.15);
+        }
+        
+        .user-card.selected {
+            border-color: #0ea5e9;
+            background: linear-gradient(135deg, rgba(14, 165, 233, 0.05) 0%, rgba(249, 115, 22, 0.05) 100%);
+            box-shadow: 0 10px 30px rgba(14, 165, 233, 0.2);
+        }
+        
+        .user-card.selected .check-icon {
+            opacity: 1;
+            transform: scale(1);
+        }
+        
+        .check-icon {
+            opacity: 0;
+            transform: scale(0);
+            transition: all 0.3s ease;
+        }
+        
+        .password-strength {
+            height: 4px;
+            border-radius: 2px;
+            transition: all 0.3s ease;
+        }
+        
+        .strength-weak { background: #ef4444; width: 33%; }
+        .strength-medium { background: #f59e0b; width: 66%; }
+        .strength-strong { background: #22c55e; width: 100%; }
+        
+        .hidden-step {
+            display: none;
+        }
+        
+        .visible-step {
+            display: block;
+            animation: fadeIn 0.5s ease-out;
+        }
+        
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 min-h-screen">
+
+    <!-- Navbar -->
+    <nav class="fixed w-full z-50 bg-white/80 backdrop-blur-md border-b border-slate-200">
+        <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <a href="#" class="flex items-center gap-2">
+                <div class="w-10 h-10 bg-gradient-to-br from-primary to-secondary rounded-lg flex items-center justify-center">
+                    <i class="fas fa-shipping-fast text-white text-xl"></i>
+                </div>
+                <span class="text-2xl font-bold text-dark">Ruta <span class="text-secondary">Xpress</span></span>
+            </a>
+            <div class="flex items-center gap-4">
+                <span class="text-slate-600 hidden sm:inline">¿Ya tienes cuenta?</span>
+                <a href="#" class="text-primary font-semibold hover:underline">Iniciar Sesión</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="pt-24 pb-12 px-4">
+        <div class="container mx-auto max-w-6xl">
+            
+            <!-- Header -->
+            <div class="text-center mb-8 animate-fade-in">
+                <h1 class="text-3xl md:text-4xl font-bold text-dark mb-3">
+                    Crea tu cuenta en <span class="gradient-text">Ruta Xpress</span>
+                </h1>
+                <p class="text-slate-600 max-w-xl mx-auto">
+                    Únete a la plataforma líder en gestión de envíos. Selecciona tu tipo de cuenta y comienza en minutos.
+                </p>
+            </div>
+
+            <!-- Progress Steps -->
+            <div class="flex justify-center mb-10">
+                <div class="flex items-center gap-2 md:gap-4">
+                    <div class="flex items-center">
+                        <div id="step-indicator-1" class="w-10 h-10 rounded-full step-active flex items-center justify-center font-bold transition-all">1</div>
+                        <span class="ml-2 font-medium text-dark hidden sm:inline">Tipo de Cuenta</span>
+                    </div>
+                    <div class="w-12 md:w-20 h-1 bg-slate-200 rounded">
+                        <div id="progress-bar" class="h-full bg-gradient-to-r from-primary to-secondary rounded transition-all duration-500" style="width: 0%"></div>
+                    </div>
+                    <div class="flex items-center">
+                        <div id="step-indicator-2" class="w-10 h-10 rounded-full bg-slate-200 text-slate-500 flex items-center justify-center font-bold transition-all">2</div>
+                        <span class="ml-2 font-medium text-slate-500 hidden sm:inline">Información</span>
+                    </div>
+                    <div class="w-12 md:w-20 h-1 bg-slate-200 rounded">
+                        <div id="progress-bar-2" class="h-full bg-slate-200 rounded transition-all duration-500" style="width: 0%"></div>
+                    </div>
+                    <div class="flex items-center">
+                        <div id="step-indicator-3" class="w-10 h-10 rounded-full bg-slate-200 text-slate-500 flex items-center justify-center font-bold transition-all">3</div>
+                        <span class="ml-2 font-medium text-slate-500 hidden sm:inline">Confirmación</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 1: Select User Type -->
+            <div id="step-1" class="visible-step">
+                <div class="grid md:grid-cols-3 gap-6 mb-8">
+                    <!-- Cliente -->
+                    <div class="user-card bg-white rounded-2xl p-6 border-2 border-slate-200 relative" onclick="selectUserType('cliente', this)">
+                        <div class="check-icon absolute top-4 right-4 w-8 h-8 bg-primary rounded-full flex items-center justify-center">
+                            <i class="fas fa-check text-white"></i>
+                        </div>
+                        <div class="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mb-4">
+                            <i class="fas fa-user text-primary text-2xl"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-dark mb-2">Soy Cliente</h3>
+                        <p class="text-slate-600 text-sm mb-4">
+                            Necesito enviar paquetes y quiero rastrearlos en tiempo real.
+                        </p>
+                        <ul class="text-sm text-slate-500 space-y-2">
+                            <li class="flex items-center gap-2">
+                                <i class="fas fa-check text-primary text-xs"></i>
+                                <span>Solicitar envíos</span>
+                            </li>
+                            <li class="flex items-center gap-2">
+                                <i class="fas fa-check text-primary text-xs"></i>
+                                <span>Rastreo GPS</span>
+                            </li>
+                            <li class="flex items-center gap-2">
+                                <i class="fas fa-check text-primary text-xs"></i>
+                                <span>Historial de envíos</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- Transportista -->
+                    <div class="user-card bg-white rounded-2xl p-6 border-2 border-slate-200 relative" onclick="selectUserType('transportista', this)">
+                        <div class="check-icon absolute top-4 right-4 w-8 h-8 bg-primary rounded-full flex items-center justify-center">
+                            <i class="fas fa-check text-white"></i>
+                        </div>
+                        <div class="w-16 h-16 bg-secondary/10 rounded-2xl flex items-center justify-center mb-4">
+                            <i class="fas fa-motorcycle text-secondary text-2xl"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-dark mb-2">Soy Transportista</h3>
+                        <p class="text-slate-600 text-sm mb-4">
+                            Tengo vehículo y quiero recibir solicitudes de envío cercanas.
+                        </p>
+                        <ul class="text-sm text-slate-500 space-y-2">
+                            <li class="flex items-center gap-2">
+                                <i class="fas fa-check text-secondary text-xs"></i>
+                                <span>Recibir pedidos</span>
+                            </li>
+                            <li class="flex items-center gap-2">
+                                <i class="fas fa-check text-secondary text-xs"></i>
+                                <span>Ganancias diarias</span>
+                            </li>
+                            <li class="flex items-center gap-2">
+                                <i class="fas fa-check text-secondary text-xs"></i>
+                                <span>Flexible horario</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- Empresa -->
+                    <div class="user-card bg-white rounded-2xl p-6 border-2 border-slate-200 relative" onclick="selectUserType('empresa', this)">
+                        <div class="check-icon absolute top-4 right-4 w-8 h-8 bg-primary rounded-full flex items-center justify-center">
+                            <i class="fas fa-check text-white"></i>
+                        </div>
+                        <div class="w-16 h-16 bg-purple-500/10 rounded-2xl flex items-center justify-center mb-4">
+                            <i class="fas fa-building text-purple-500 text-2xl"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-dark mb-2">Soy Empresa</h3>
+                        <p class="text-slate-600 text-sm mb-4">
+                            Tengo una empresa de transporte y necesito gestionar mi flota.
+                        </p>
+                        <ul class="text-sm text-slate-500 space-y-2">
+                            <li class="flex items-center gap-2">
+                                <i class="fas fa-check text-purple-500 text-xs"></i>
+                                <span>Gestión de flota</span>
+                            </li>
+                            <li class="flex items-center gap-2">
+                                <i class="fas fa-check text-purple-500 text-xs"></i>
+                                <span>Panel administrativo</span>
+                            </li>
+                            <li class="flex items-center gap-2">
+                                <i class="fas fa-check text-purple-500 text-xs"></i>
+                                <span>Reportes financieros</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="flex justify-end">
+                    <button id="btn-step-1" onclick="goToStep(2)" disabled 
+                        class="bg-slate-300 text-white px-8 py-3 rounded-xl font-semibold transition-all cursor-not-allowed flex items-center gap-2">
+                        Continuar
+                        <i class="fas fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Step 2: Registration Form -->
+            <div id="step-2" class="hidden-step">
+                <div class="grid lg:grid-cols-5 gap-8">
+                    <!-- Form Section -->
+                    <div class="lg:col-span-3">
+                        <div class="bg-white rounded-2xl shadow-lg p-6 md:p-8">
+                            <div class="flex items-center gap-3 mb-6">
+                                <button onclick="goToStep(1)" class="text-slate-400 hover:text-primary transition">
+                                    <i class="fas fa-arrow-left text-xl"></i>
+                                </button>
+                                <div>
+                                    <h2 class="text-2xl font-bold text-dark">Completa tus datos</h2>
+                                    <p class="text-slate-500 text-sm" id="form-subtitle">Cuenta de Cliente</p>
+                                </div>
+                            </div>
+
+                            <form id="registration-form" onsubmit="handleSubmit(event)">
+                                <!-- Common Fields -->
+                                <div class="grid md:grid-cols-2 gap-4 mb-4">
+                                    <div>
+                                        <label class="block text-sm font-medium text-dark mb-2">
+                                            Nombre Completo <span class="text-red-500">*</span>
+                                        </label>
+                                        <div class="relative">
+                                            <i class="fas fa-user absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400"></i>
+                                            <input type="text" id="fullName" required
+                                                class="w-full pl-10 pr-4 py-3 border border-slate-300 rounded-xl focus:border-primary focus:outline-none input-focus-ring transition"
+                                                placeholder="Juan Pérez">
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-dark mb-2">
+                                            Correo Electrónico <span class="text-red-500">*</span>
+                                        </label>
+                                        <div class="relative">
+                                            <i class="fas fa-envelope absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400"></i>
+                                            <input type="email" id="email" required
+                                                class="w-full pl-10 pr-4 py-3 border border-slate-300 rounded-xl focus:border-primary focus:outline-none input-focus-ring transition"
+                                                placeholder="juan@email.com">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="grid md:grid-cols-2 gap-4 mb-4">
+                                    <div>
+                                        <label class="block text-sm font-medium text-dark mb-2">
+                                            Teléfono <span class="text-red-500">*</span>
+                                        </label>
+                                        <div class="relative">
+                                            <i class="fas fa-phone absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400"></i>
+                                            <input type="tel" id="phone" required
+                                                class="w-full pl-10 pr-4 py-3 border border-slate-300 rounded-xl focus:border-primary focus:outline-none input-focus-ring transition"
+                                                placeholder="+57 300 123 4567">
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-dark mb-2">
+                                            Ciudad <span class="text-red-500">*</span>
+                                        </label>
+                                        <div class="relative">
+                                            <i class="fas fa-map-marker-alt absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400"></i>
+                                            <select id="city" required
+                                                class="w-full pl-10 pr-4 py-3 border border-slate-300 rounded-xl focus:border-primary focus:outline-none input-focus-ring transition appearance-none bg-white">
+                                                <option value="">Selecciona tu ciudad</option>
+                                                <option value="bogota">Bogotá</option>
+                                                <option value="medellin">Medellín</option>
+                                                <option value="cali">Cali</option>
+                                                <option value="barranquilla">Barranquilla</option>
+                                                <option value="cartagena">Cartagena</option>
+                                                <option value="otra">Otra</option>
+                                            </select>
+                                            <i class="fas fa-chevron-down absolute right-3 top-1/2 transform -translate-y-1/2 text-slate-400 pointer-events-none"></i>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Password Fields -->
+                                <div class="mb-4">
+                                    <label class="block text-sm font-medium text-dark mb-2">
+                                        Contraseña <span class="text-red-500">*</span>
+                                    </label>
+                                    <div class="relative">
+                                        <i class="fas fa-lock absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400"></i>
+                                        <input type="password" id="password" required oninput="checkPasswordStrength(this.value)"
+                                            class="w-full pl-10 pr-12 py-3 border border-slate-300 rounded-xl focus:border-primary focus:outline-none input-focus-ring transition"
+                                            placeholder="••••••••">
+                                        <button type="button" onclick="togglePassword('password', this)" 
+                                            class="absolute right-3 top-1/2 transform -translate-y-1/2 text-slate-400 hover:text-primary transition">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                    </div>
+                                    <div class="mt-2 flex gap-1">
+                                        <div id="strength-bar" class="password-strength bg-slate-200 flex-1"></div>
+                                    </div>
+                                    <p id="strength-text" class="text-xs text-slate-500 mt-1">La contraseña debe tener al menos 8 caracteres</p>
+                                </div>
+
+                                <div class="mb-6">
+                                    <label class="block text-sm font-medium text-dark mb-2">
+                                        Confirmar Contraseña <span class="text-red-500">*</span>
+                                    </label>
+                                    <div class="relative">
+                                        <i class="fas fa-lock absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400"></i>
+                                        <input type="password" id="confirmPassword" required oninput="checkPasswordMatch()"
+                                            class="w-full pl-10 pr-12 py-3 border border-slate-300 rounded-xl focus:border-primary focus:outline-none input-focus-ring transition"
+                                            placeholder="••••••••">
+                                        <button type="button" onclick="togglePassword('confirmPassword', this)" 
+                                            class="absolute right-3 top-1/2 transform -translate-y-1/2 text-slate-400 hover:text-primary transition">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                    </div>
+                                    <p id="match-error" class="text-xs text-red-500 mt-1 hidden">
+                                        <i class="fas fa-exclamation-circle"></i> Las contraseñas no coinciden
+                                    </p>
+                                </div>
+
+                                <!-- Transportista Specific Fields -->
+                                <div id="transportista-fields" class="hidden border-t border-slate-200 pt-6 mb-6">
+                                    <h4 class="font-bold text-dark mb-4 flex items-center gap-2">
+                                        <i class="fas fa-motorcycle text-secondary"></i>
+                                        Información del Vehículo
+                                    </h4>
+                                    <div class="grid md:grid-cols-2 gap-4 mb-4">
+                                        <div>
+                                            <label class="block text-sm font-medium text-dark mb-2">
+                                                Tipo de Vehículo <span class="text-red-500">*</span>
+                                            </label>
+                                            <select id="vehicleType" 
+                                                class="w-full px-4 py-3 border border-slate-300 rounded-xl focus:border-primary focus:outline-none input-focus-ring transition">
+                                                <option value="">Selecciona...</option>
+                                                <option value="moto">Moto</option>
+                                                <option value="carro">Carro</option>
+                                                <option value="camioneta">Camioneta</option>
+                                                <option value="bicicleta">Bicicleta</option>
+                                            </select>
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-medium text-dark mb-2">
+                                                Placa <span class="text-red-500">*</span>
+                                            </label>
+                                            <input type="text" id="plate" 
+                                                class="w-full px-4 py-3 border border-slate-300 rounded-xl focus:border-primary focus:outline-none input-focus-ring transition uppercase"
+                                                placeholder="ABC-123">
+                                        </div>
+                                    </div>
+                                    <div class="mb-4">
+                                        <label class="block text-sm font-medium text-dark mb-2">
+                                            Capacidad de Carga Aproximada
+                                        </label>
+                                        <div class="flex gap-4">
+                                            <label class="flex items-center gap-2 cursor-pointer">
+                                                <input type="radio" name="capacity" value="small" class="text-primary">
+                                                <span class="text-sm">Pequeña (hasta 10kg)</span>
+                                            </label>
+                                            <label class="flex items-center gap-2 cursor-pointer">
+                                                <input type="radio" name="capacity" value="medium" class="text-primary">
+                                                <span class="text-sm">Mediana (10-30kg)</span>
+                                            </label>
+                                            <label class="flex items-center gap-2 cursor-pointer">
+                                                <input type="radio" name="capacity" value="large" class="text-primary">
+                                                <span class="text-sm">Grande (30kg+)</span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-dark mb-2">
+                                            Licencia de Conducción <span class="text-red-500">*</span>
+                                        </label>
+                                        <div class="border-2 border-dashed border-slate-300 rounded-xl p-6 text-center hover:border-primary transition cursor-pointer">
+                                            <i class="fas fa-cloud-upload-alt text-3xl text-slate-400 mb-2"></i>
+                                            <p class="text-sm text-slate-600">Arrastra o haz clic para subir</p>
+                                            <p class="text-xs text-slate-400">PDF, JPG o PNG (máx. 5MB)</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Empresa Specific Fields -->
+                                <div id="empresa-fields" class="hidden border-t border-slate-200 pt-6 mb-6">
+                                    <h4 class="font-bold text-dark mb-4 flex items-center gap-2">
+                                        <i class="fas fa-building text-purple-500"></i>
+                                        Información de la Empresa
+                                    </h4>
+                                    <div class="grid md:grid-cols-2 gap-4 mb-4">
+                                        <div>
+                                            <label class="block text-sm font-medium text-dark mb-2">
+                                                Nombre de la Empresa <span class="text-red-500">*</span>
+                                            </label>
+                                            <input type="text" id="companyName" 
+                                                class="w-full px-4 py-3 border border-slate-300 rounded-xl focus:border-primary focus:outline-none input-focus-ring transition"
+                                                placeholder="Transportes Ejemplo S.A.S.">
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-medium text-dark mb-2">
+                                                NIT <span class="text-red-500">*</span>
+                                            </label>
+                                            <input type="text" id="nit" 
+                                                class="w-full px-4 py-3 border border-slate-300 rounded-xl focus:border-primary focus:outline-none input-focus-ring transition"
+                                                placeholder="900.123.456-7">
+                                        </div>
+                                    </div>
+                                    <div class="mb-4">
+                                        <label class="block text-sm font-medium text-dark mb-2">
+                                            Dirección Comercial <span class="text-red-500">*</span>
+                                        </label>
+                                        <textarea id="address" rows="2"
+                                            class="w-full px-4 py-3 border border-slate-300 rounded-xl focus:border-primary focus:outline-none input-focus-ring transition resize-none"
+                                            placeholder="Calle 123 # 45-67, Oficina 101"></textarea>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-dark mb-2">
+                                            Cantidad de Transportistas
+                                        </label>
+                                        <select id="fleetSize" 
+                                            class="w-full px-4 py-3 border border-slate-300 rounded-xl focus:border-primary focus:outline-none input-focus-ring transition">
+                                            <option value="">Selecciona...</option>
+                                            <option value="1-5">1-5</option>
+                                            <option value="6-15">6-15</option>
+                                            <option value="16-30">16-30</option>
+                                            <option value="30+">Más de 30</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <!-- Terms -->
+                                <div class="mb-6">
+                                    <label class="flex items-start gap-3 cursor-pointer">
+                                        <input type="checkbox" id="terms" required
+                                            class="mt-1 w-5 h-5 text-primary border-slate-300 rounded focus:ring-primary">
+                                        <span class="text-sm text-slate-600">
+                                            Acepto los <a href="#" class="text-primary hover:underline">Términos de Servicio</a> 
+                                            y la <a href="#" class="text-primary hover:underline">Política de Privacidad</a>. 
+                                            Confirmo que tengo al menos 18 años.
+                                        </span>
+                                    </label>
+                                </div>
+
+                                <div class="flex gap-4">
+                                    <button type="button" onclick="goToStep(1)"
+                                        class="px-6 py-3 border-2 border-slate-300 text-slate-600 rounded-xl font-semibold hover:border-primary hover:text-primary transition">
+                                        Atrás
+                                    </button>
+                                    <button type="submit" id="submit-btn"
+                                        class="flex-1 bg-gradient-to-r from-primary to-secondary text-white py-3 rounded-xl font-semibold hover:shadow-lg hover:shadow-primary/30 transition transform hover:scale-[1.02] flex items-center justify-center gap-2">
+                                        <span>Crear Cuenta</span>
+                                        <i class="fas fa-arrow-right"></i>
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Info Section -->
+                    <div class="lg:col-span-2">
+                        <div class="bg-gradient-to-br from-dark to-slate-800 rounded-2xl p-6 text-white h-full">
+                            <div id="info-cliente" class="info-panel">
+                                <div class="w-16 h-16 bg-primary/20 rounded-2xl flex items-center justify-center mb-4">
+                                    <i class="fas fa-user text-primary text-3xl"></i>
+                                </div>
+                                <h3 class="text-2xl font-bold mb-4">Beneficios para Clientes</h3>
+                                <ul class="space-y-4">
+                                    <li class="flex items-start gap-3">
+                                        <div class="w-6 h-6 bg-green-500/20 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                                            <i class="fas fa-check text-green-400 text-xs"></i>
+                                        </div>
+                                        <div>
+                                            <p class="font-semibold">Envíos desde $5.000</p>
+                                            <p class="text-sm text-white/60">Tarifas competitivas por distancia</p>
+                                        </div>
+                                    </li>
+                                    <li class="flex items-start gap-3">
+                                        <div class="w-6 h-6 bg-green-500/20 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                                            <i class="fas fa-check text-green-400 text-xs"></i>
+                                        </div>
+                                        <div>
+                                            <p class="font-semibold">Rastreo GPS en tiempo real</p>
+                                            <p class="text-sm text-white/60">Sigue tu paquete minuto a minuto</p>
+                                        </div>
+                                    </li>
+                                    <li class="flex items-start gap-3">
+                                        <div class="w-6 h-6 bg-green-500/20 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                                            <i class="fas fa-check text-green-400 text-xs"></i>
+                                        </div>
+                                        <div>
+                                            <p class="font-semibold">Entrega garantizada</p>
+                                            <p class="text-sm text-white/60">Seguro de hasta $1.000.000</p>
+                                        </div>
+                                    </li>
+                                </ul>
+                                <div class="mt-8 p-4 bg-white/5 rounded-xl">
+                                    <p class="text-sm text-white/80 italic">
+                                        "Desde que uso Ruta Xpress, mis envíos llegan más rápido y puedo monitorearlos todo el tiempo."
+                                    </p>
+                                    <p class="text-sm text-primary mt-2">— María G., Dueña de tienda online</p>
+                                </div>
+                            </div>
+
+                            <div id="info-transportista" class="info-panel hidden">
+                                <div class="w-16 h-16 bg-secondary/20 rounded-2xl flex items-center justify-center mb-4">
+                                    <i class="fas fa-motorcycle text-secondary text-3xl"></i>
+                                </div>
+                                <h3 class="text-2xl font-bold mb-4">Beneficios para Transportistas</h3>
+                                <ul class="space-y-4">
+                                    <li class="flex items-start gap-3">
+                                        <div class="w-6 h-6 bg-secondary/20 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                                            <i class="fas fa-check text-secondary text-xs"></i>
+                                        </div>
+                                        <div>
+                                            <p class="font-semibold">Gana hasta $150.000/día</p>
+                                            <p class="text-sm text-white/60">Según disponibilidad y zona</p>
+                                        </div>
+                                    </li>
+                                    <li class="flex items-start gap-3">
+                                        <div class="w-6 h-6 bg-secondary/20 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                                            <i class="fas fa-check text-secondary text-xs"></i>
+                                        </div>
+                                        <div>
+                                            <p class="font-semibold">Horario flexible</p>
+                                            <p class="text-sm text-white/60">Tú decides cuándo trabajar</p>
+                                        </div>
+                                    </li>
+                                    <li class="flex items-start gap-3">
+                                        <div class="w-6 h-6 bg-secondary/20 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                                            <i class="fas fa-check text-secondary text-xs"></i>
+                                        </div>
+                                        <div>
+                                            <p class="font-semibold">Pagos semanales</p>
+                                            <p class="text-sm text-white/60">Directo a tu cuenta bancaria</p>
+                                        </div>
+                                    </li>
+                                </ul>
+                                <div class="mt-8 p-4 bg-white/5 rounded-xl">
+                                    <p class="text-sm text-white/80 italic">
+                                        "Ruta Xpress me permite generar ingresos extra después de mi trabajo principal. Muy recomendado."
+                                    </p>
+                                    <p class="text-sm text-secondary mt-2">— Carlos M., Transportista</p>
+                                </div>
+                            </div>
+
+                            <div id="info-empresa" class="info-panel hidden">
+                                <div class="w-16 h-16 bg-purple-500/20 rounded-2xl flex items-center justify-center mb-4">
+                                    <i class="fas fa-building text-purple-500 text-3xl"></i>
+                                </div>
+                                <h3 class="text-2xl font-bold mb-4">Beneficios para Empresas</h3>
+                                <ul class="space-y-4">
+                                    <li class="flex items-start gap-3">
+                                        <div class="w-6 h-6 bg-purple-500/20 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                                            <i class="fas fa-check text-purple-400 text-xs"></i>
+                                        </div>
+                                        <div>
+                                            <p class="font-semibold">Gestión centralizada</p>
+                                            <p class="text-sm text-white/60">Control total de tu flota</p>
+                                        </div>
+                                    </li>
+                                    <li class="flex items-start gap-3">
+                                        <div class="w-6 h-6 bg-purple-500/20 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                                            <i class="fas fa-check text-purple-400 text-xs"></i>
+                                        </div>
+                                        <div>
+                                            <p class="font-semibold">Reportes financieros</p>
+                                            <p class="text-sm text-white/60">Ingresos, gastos y utilidades</p>
+                                        </div>
+                                    </li>
+                                    <li class="flex items-start gap-3">
+                                        <div class="w-6 h-6 bg-purple-500/20 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                                            <i class="fas fa-check text-purple-400 text-xs"></i>
+                                        </div>
+                                        <div>
+                                            <p class="font-semibold">Soporte prioritario</p>
+                                            <p class="text-sm text-white/60">Atención 24/7 para tu empresa</p>
+                                        </div>
+                                    </li>
+                                </ul>
+                                <div class="mt-8 p-4 bg-white/5 rounded-xl">
+                                    <p class="text-sm text-white/80 italic">
+                                        "Hemos reducido nuestros costos operativos en un 30% desde que implementamos Ruta Xpress."
+                                    </p>
+                                    <p class="text-sm text-purple-400 mt-2">— Laura P., Directora de Operaciones</p>
+                                </div>
+                            </div>
+
+                            <!-- Trust Badges -->
+                            <div class="mt-8 pt-8 border-t border-white/10">
+                                <p class="text-sm text-white/60 mb-4">Confían en nosotros:</p>
+                                <div class="flex gap-4 flex-wrap">
+                                    <div class="w-12 h-12 bg-white/10 rounded-lg flex items-center justify-center">
+                                        <i class="fas fa-shield-alt text-2xl text-white/40"></i>
+                                    </div>
+                                    <div class="w-12 h-12 bg-white/10 rounded-lg flex items-center justify-center">
+                                        <i class="fas fa-lock text-2xl text-white/40"></i>
+                                    </div>
+                                    <div class="w-12 h-12 bg-white/10 rounded-lg flex items-center justify-center">
+                                        <i class="fas fa-check-circle text-2xl text-white/40"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 3: Success -->
+            <div id="step-3" class="hidden-step">
+                <div class="max-w-2xl mx-auto text-center">
+                    <div class="w-24 h-24 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6 animate-float">
+                        <i class="fas fa-check-circle text-green-500 text-5xl"></i>
+                    </div>
+                    <h2 class="text-3xl font-bold text-dark mb-4">¡Cuenta Creada Exitosamente!</h2>
+                    <p class="text-slate-600 mb-8">
+                        Hemos enviado un correo de confirmación a <span id="success-email" class="font-semibold text-primary"></span>. 
+                        Por favor verifica tu bandeja de entrada y sigue las instrucciones para activar tu cuenta.
+                    </p>
+                    
+                    <div class="bg-white rounded-2xl shadow-lg p-6 mb-8">
+                        <h3 class="font-bold text-dark mb-4">¿Qué sigue?</h3>
+                        <div class="space-y-4 text-left">
+                            <div class="flex items-center gap-4 p-4 bg-slate-50 rounded-xl">
+                                <div class="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0">
+                                    <span class="font-bold text-primary">1</span>
+                                </div>
+                                <div>
+                                    <p class="font-semibold text-dark">Verifica tu correo</p>
+                                    <p class="text-sm text-slate-500">Haz clic en el enlace que enviamos</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-4 p-4 bg-slate-50 rounded-xl">
+                                <div class="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0">
+                                    <span class="font-bold text-primary">2</span>
+                                </div>
+                                <div>
+                                    <p class="font-semibold text-dark">Completa tu perfil</p>
+                                    <p class="text-sm text-slate-500">Agrega más información sobre ti</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-4 p-4 bg-slate-50 rounded-xl">
+                                <div class="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0">
+                                    <span class="font-bold text-primary">3</span>
+                                </div>
+                                <div>
+                                    <p class="font-semibold text-dark">¡Comienza a usar Ruta Xpress!</p>
+                                    <p class="text-sm text-slate-500">Explora todas las funcionalidades</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                        <a href="#" class="bg-gradient-to-r from-primary to-secondary text-white px-8 py-3 rounded-xl font-semibold hover:shadow-lg transition flex items-center justify-center gap-2">
+                            <i class="fas fa-envelope"></i>
+                            Ir a mi Correo
+                        </a>
+                        <button onclick="location.reload()" class="border-2 border-slate-300 text-slate-600 px-8 py-3 rounded-xl font-semibold hover:border-primary hover:text-primary transition">
+                            Volver al Inicio
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Footer Simple -->
+    <footer class="bg-white border-t border-slate-200 py-6">
+        <div class="container mx-auto px-6 text-center">
+            <p class="text-slate-500 text-sm">
+                © 2024 Ruta Xpress. Todos los derechos reservados. 
+                <a href="#" class="text-primary hover:underline">Términos</a> · 
+                <a href="#" class="text-primary hover:underline">Privacidad</a> · 
+                <a href="#" class="text-primary hover:underline">Cookies</a>
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        let selectedUserType = null;
+        let currentStep = 1;
+
+        // Select User Type
+        function selectUserType(type, element) {
+            selectedUserType = type;
+            
+            // Remove selected class from all cards
+            document.querySelectorAll('.user-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            
+            // Add selected class to clicked card
+            element.classList.add('selected');
+            
+            // Enable continue button
+            const btn = document.getElementById('btn-step-1');
+            btn.disabled = false;
+            btn.classList.remove('bg-slate-300', 'cursor-not-allowed');
+            btn.classList.add('bg-gradient-to-r', 'from-primary', 'to-secondary', 'hover:shadow-lg');
+            
+            // Update info panel visibility
+            document.querySelectorAll('.info-panel').forEach(panel => panel.classList.add('hidden'));
+            document.getElementById(`info-${type}`).classList.remove('hidden');
+        }
+
+        // Navigation between steps
+        function goToStep(step) {
+            // Hide current step
+            document.getElementById(`step-${currentStep}`).classList.remove('visible-step');
+            document.getElementById(`step-${currentStep}`).classList.add('hidden-step');
+            
+            // Show new step
+            document.getElementById(`step-${step}`).classList.remove('hidden-step');
+            document.getElementById(`step-${step}`).classList.add('visible-step');
+            
+            // Update progress indicators
+            updateProgress(step);
+            
+            // If going to step 2, update form based on user type
+            if (step === 2 && selectedUserType) {
+                updateFormForUserType();
+            }
+            
+            currentStep = step;
+            
+            // Scroll to top
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function updateProgress(step) {
+            // Update step indicators
+            for (let i = 1; i <= 3; i++) {
+                const indicator = document.getElementById(`step-indicator-${i}`);
+                if (i < step) {
+                    indicator.classList.remove('step-active', 'bg-slate-200', 'text-slate-500');
+                    indicator.classList.add('step-completed');
+                    indicator.innerHTML = '<i class="fas fa-check"></i>';
+                } else if (i === step) {
+                    indicator.classList.remove('step-completed', 'bg-slate-200', 'text-slate-500');
+                    indicator.classList.add('step-active');
+                    indicator.textContent = i;
+                } else {
+                    indicator.classList.remove('step-active', 'step-completed');
+                    indicator.classList.add('bg-slate-200', 'text-slate-500');
+                    indicator.textContent = i;
+                }
+            }
+            
+            // Update progress bars
+            if (step === 1) {
+                document.getElementById('progress-bar').style.width = '0%';
+                document.getElementById('progress-bar-2').style.width = '0%';
+            } else if (step === 2) {
+                document.getElementById('progress-bar').style.width = '100%';
+                document.getElementById('progress-bar-2').style.width = '0%';
+            } else {
+                document.getElementById('progress-bar').style.width = '100%';
+                document.getElementById('progress-bar-2').style.width = '100%';
+            }
+        }
+
+        function updateFormForUserType() {
+            const subtitle = document.getElementById('form-subtitle');
+            const transportistaFields = document.getElementById('transportista-fields');
+            const empresaFields = document.getElementById('empresa-fields');
+            
+            // Hide all specific fields
+            transportistaFields.classList.add('hidden');
+            empresaFields.classList.add('hidden');
+            
+            // Show relevant fields and update subtitle
+            switch(selectedUserType) {
+                case 'cliente':
+                    subtitle.textContent = 'Cuenta Personal - Cliente';
+                    break;
+                case 'transportista':
+                    subtitle.textContent = 'Cuenta de Transportista';
+                    transportistaFields.classList.remove('hidden');
+                    // Make transportista fields required
+                    document.getElementById('vehicleType').required = true;
+                    document.getElementById('plate').required = true;
+                    break;
+                case 'empresa':
+                    subtitle.textContent = 'Cuenta Empresarial';
+                    empresaFields.classList.remove('hidden');
+                    // Make empresa fields required
+                    document.getElementById('companyName').required = true;
+                    document.getElementById('nit').required = true;
+                    document.getElementById('address').required = true;
+                    break;
+            }
+        }
+
+        // Password Strength Checker
+        function checkPasswordStrength(password) {
+            const bar = document.getElementById('strength-bar');
+            const text = document.getElementById('strength-text');
+            
+            let strength = 0;
+            if (password.length >= 8) strength++;
+            if (password.match(/[a-z]/) && password.match(/[A-Z]/)) strength++;
+            if (password.match(/[0-9]/)) strength++;
+            if (password.match(/[^a-zA-Z0-9]/)) strength++;
+            
+            bar.className = 'password-strength flex-1';
+            
+            if (password.length === 0) {
+                bar.classList.add('bg-slate-200');
+                text.textContent = 'La contraseña debe tener al menos 8 caracteres';
+                text.className = 'text-xs text-slate-500 mt-1';
+            } else if (strength <= 1) {
+                bar.classList.add('strength-weak');
+                text.textContent = 'Contraseña débil - Agrega mayúsculas, números y símbolos';
+                text.className = 'text-xs text-red-500 mt-1';
+            } else if (strength === 2 || strength === 3) {
+                bar.classList.add('strength-medium');
+                text.textContent = 'Contraseña media - Puedes mejorarla con más variedad';
+                text.className = 'text-xs text-amber-500 mt-1';
+            } else {
+                bar.classList.add('strength-strong');
+                text.textContent = '¡Excelente! Contraseña segura';
+                text.className = 'text-xs text-green-500 mt-1';
+            }
+        }
+
+        // Password Match Checker
+        function checkPasswordMatch() {
+            const password = document.getElementById('password').value;
+            const confirm = document.getElementById('confirmPassword').value;
+            const error = document.getElementById('match-error');
+            
+            if (confirm && password !== confirm) {
+                error.classList.remove('hidden');
+                document.getElementById('confirmPassword').classList.add('border-red-500');
+            } else {
+                error.classList.add('hidden');
+                document.getElementById('confirmPassword').classList.remove('border-red-500');
+            }
+        }
+
+        // Toggle Password Visibility
+        function togglePassword(fieldId, button) {
+            const field = document.getElementById(fieldId);
+            const icon = button.querySelector('i');
+            
+            if (field.type === 'password') {
+                field.type = 'text';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                field.type = 'password';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
+        }
+
+        // Form Submission
+        function handleSubmit(event) {
+            event.preventDefault();
+            
+            // Validate passwords match
+            const password = document.getElementById('password').value;
+            const confirm = document.getElementById('confirmPassword').value;
+            
+            if (password !== confirm) {
+                document.getElementById('confirmPassword').classList.add('animate-shake');
+                setTimeout(() => {
+                    document.getElementById('confirmPassword').classList.remove('animate-shake');
+                }, 500);
+                return;
+            }
+            
+            // Validate terms
+            if (!document.getElementById('terms').checked) {
+                alert('Por favor acepta los términos y condiciones');
+                return;
+            }
+            
+            // Simulate API call
+            const submitBtn = document.getElementById('submit-btn');
+            const originalContent = submitBtn.innerHTML;
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creando cuenta...';
+            
+            setTimeout(() => {
+                // Show success email
+                document.getElementById('success-email').textContent = document.getElementById('email').value;
+                
+                // Go to success step
+                goToStep(3);
+                
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalContent;
+            }, 2000);
+        }
+
+        // Input formatting
+        document.getElementById('phone').addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length > 0) {
+                if (value.length <= 3) {
+                    value = '+57 ' + value;
+                } else if (value.length <= 6) {
+                    value = '+57 ' + value.slice(0, 3) + ' ' + value.slice(3);
+                } else if (value.length <= 10) {
+                    value = '+57 ' + value.slice(0, 3) + ' ' + value.slice(3, 6) + ' ' + value.slice(6);
+                } else {
+                    value = '+57 ' + value.slice(0, 3) + ' ' + value.slice(3, 6) + ' ' + value.slice(6, 10);
+                }
+            }
+            e.target.value = value;
+        });
+
+        document.getElementById('nit').addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length > 9) value = value.slice(0, 9);
+            
+            if (value.length > 7) {
+                value = value.slice(0, 3) + '.' + value.slice(3, 6) + '.' + value.slice(6, 9) + '-' + (value[9] || '');
+            } else if (value.length > 3) {
+                value = value.slice(0, 3) + '.' + value.slice(3, 6) + '.' + value.slice(6);
+            } else if (value.length > 3) {
+                value = value.slice(0, 3) + '.' + value.slice(3);
+            }
+            
+            e.target.value = value;
+        });
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            // Pre-select cliente by default (optional)
+            // selectUserType('cliente', document.querySelector('.user-card'));
+        });
+    </script>
+</body>
+</html>
